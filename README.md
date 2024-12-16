@@ -1,4 +1,4 @@
-# toonflix
+# WebtoonDex
 
 A new Flutter project.
 
