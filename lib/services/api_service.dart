@@ -8,11 +8,13 @@ import 'package:toonflix/models/webtoon_detail_model_kakao.dart';
 import 'package:toonflix/models/webtoon_model_kakao.dart';
 import 'package:intl/intl.dart';
 
+//import 'package:html/parser.dart' as html;
+
 class ApiService {
   static const String baseUrl =
       "https://webtoon-crawler.nomadcoders.workers.dev";
   static String baseKakaoUrl =
-      "https://korea-webtoon-api-cc7dda2f0d77.herokuapp.com";
+      "https://korea-webtoon-api-cc7dda2f0d77.herokuapp.com/webtoons";
   static const String today = "today";
 
   // 네이버
@@ -33,11 +35,12 @@ class ApiService {
 
   // 카카오
   static Future<List<WebtoonModelKakao>> getTodaysKakaoToons(
-      String service) async {
+      String provider) async {
+    provider = provider.toUpperCase();
     late var now = DateTime.now();
     String updateDay = '';
     updateToday() {
-      updateDay = DateFormat('EEEE').format(now).substring(0, 3).toLowerCase();
+      updateDay = DateFormat('EEEE').format(now).substring(0, 3).toUpperCase();
     }
 
     updateToday();
@@ -45,7 +48,7 @@ class ApiService {
     List<WebtoonModelKakao> webtoonIstances = [];
 
     final url =
-        Uri.parse('$baseKakaoUrl/?service=$service&updateDay=$updateDay');
+        Uri.parse('$baseKakaoUrl?provider=$provider&updateDay=$updateDay');
     final response = await http.get(url);
 
     print(url);
@@ -53,9 +56,10 @@ class ApiService {
       final List<dynamic> webtoons = jsonDecode(response.body)["webtoons"];
 
       for (var webtoon in webtoons) {
-        if (webtoon["img"].startsWith('//')) {
-          webtoon["img"] = webtoon["img"].replaceRange(0, 2, 'https://');
-        }
+        // if (webtoon["thumbnail"].startsWith('//')) {
+        //   webtoon["thumbnail"] =
+        //       webtoon["thumbnail"].replaceRange(0, 2, 'https://');
+        // }
         webtoonIstances.add(WebtoonModelKakao.fromJson(webtoon));
       }
 
@@ -75,7 +79,7 @@ class ApiService {
   }
 
   static Future<WebtoonDetailModelKakao> getKakaoToonById(String title) async {
-    Uri url = Uri.parse('$baseKakaoUrl/search?keyword=$title');
+    Uri url = Uri.parse('$baseKakaoUrl/?keyword=$title');
 
     // print(url);
     final response = await http.get(url);
@@ -84,8 +88,11 @@ class ApiService {
       final webtoon = jsonDecode(response.body);
 
       // print(webtoon['webtoons'][0]);
-
-      return WebtoonDetailModelKakao.fromJson(webtoon['webtoons'][0]);
+      if (webtoon['webtoons'] != null &&
+          webtoon['webtoons'] is List &&
+          webtoon['webtoons'].isNotEmpty) {
+        return WebtoonDetailModelKakao.fromJson(webtoon['webtoons'][0]);
+      }
     }
     throw Error();
   }

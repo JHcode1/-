@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:toonflix/screens/detail_screen.dart';
 
 class MainThumbWidget extends StatelessWidget {
-  final String title, id, thumb, service;
+  final String title, id, thumb, provider;
   const MainThumbWidget(
       {super.key,
       required this.title,
       required this.thumb,
       required this.id,
-      required this.service});
+      required this.provider});
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +20,9 @@ class MainThumbWidget extends StatelessWidget {
                 MaterialPageRoute(
                     builder: (context) => DetailScreen(
                         webtoonId: id,
-                        img: thumb,
+                        thumbnail: thumb,
                         title: title,
-                        service: service)));
+                        provider: provider)));
           },
           child: Column(
             children: [
@@ -40,13 +40,14 @@ class MainThumbWidget extends StatelessWidget {
                               "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
                         },
                       ),
-                      if (service != 'naver' && service == 'kakaoPage')
+                      if (provider != 'naver' && provider == 'KAKAO_PAGE')
                         kakaoPageContainer(),
                     ],
                   ),
                 ),
               ),
-              if (service != 'naver' && service != 'kakaoPage') kakaoContainer()
+              if (provider != 'naver' && provider != 'KAKAO_PAGE')
+                kakaoContainer()
             ],
           ));
     }

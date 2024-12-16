@@ -1,9 +1,11 @@
 class WebtoonModelKakao {
-  final String title, img, service, id;
+  final String title, provider, id, url;
+  final List<String> thumbnail;
 
   WebtoonModelKakao.fromJson(Map<String, dynamic> json)
       : title = json['title'],
-        img = json['img'],
-        id = json['_id'],
-        service = json['service'];
+        thumbnail = List<String>.from(json['thumbnail']),
+        id = json['id'],
+        url = json['url'],
+        provider = json['provider'];
 }

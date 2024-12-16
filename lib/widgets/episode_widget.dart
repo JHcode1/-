@@ -4,10 +4,10 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 class Episode extends StatelessWidget {
   const Episode({
-    Key? key,
+    super.key,
     required this.episode,
     required this.webtoonId,
-  }) : super(key: key);
+  });
 
   final String webtoonId;
   final WebtoonEpisodeModel episode;

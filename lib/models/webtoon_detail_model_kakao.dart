@@ -1,11 +1,10 @@
 class WebtoonDetailModelKakao {
-  final String title, img, service, id, url, author;
-
+  final String title, provider, id, url;
+  final List<String> authors;
   WebtoonDetailModelKakao.fromJson(Map<dynamic, dynamic> json)
       : title = json['title'],
-        img = json['img'],
-        id = json['_id'],
-        service = json['service'],
+        id = json['id'],
+        provider = json['provider'],
         url = json['url'],
-        author = json['author'];
+        authors = List<String>.from(json['authors']);
 }

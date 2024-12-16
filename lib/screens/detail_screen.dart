@@ -10,13 +10,13 @@ import 'package:toonflix/models/webtoon_model_naver.dart';
 import 'package:toonflix/models/webtoon_model_kakao.dart';
 
 class DetailScreen extends StatefulWidget {
-  final String title, img, webtoonId, service;
+  final String title, thumbnail, webtoonId, provider;
   const DetailScreen(
       {super.key,
       required this.title,
-      required this.img,
+      required this.thumbnail,
       required this.webtoonId,
-      required this.service});
+      required this.provider});
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();
@@ -62,7 +62,7 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   final List<String> servicesNameKr = ['네이버 웹툰', '카카오페이지 웹툰', '카카오 웹툰'];
-  final List<String> servicesNameEng = ['naver', 'kakaoPage', 'kakao'];
+  final List<String> servicesNameEng = ['naver', 'kakao_Page', 'kakao'];
 
   final Future<List<WebtoonModel>> webtoonsNaver = ApiService.getTodaysToons();
   late Future<List<WebtoonModelKakao>> webtoonsKakaoPage;
@@ -119,7 +119,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     borderRadius: BorderRadius.circular(20),
                     color: const Color(0xfffcf0f0)),
                 child: Image.network(
-                  widget.img,
+                  widget.thumbnail,
                   alignment: Alignment.topCenter,
                   fit: BoxFit.cover,
                   headers: const {
@@ -130,9 +130,9 @@ class _DetailScreenState extends State<DetailScreen> {
               ),
             ),
             const SizedBox(height: 30),
-            if (widget.service == servicesNameEng[0]) naverDetail(),
-            if (widget.service == servicesNameEng[2] ||
-                widget.service == servicesNameEng[1])
+            if (widget.provider == servicesNameEng[0]) naverDetail(),
+            if (widget.provider == servicesNameEng[2] ||
+                widget.provider == servicesNameEng[1])
               kakaoDetail(),
           ],
         ),
@@ -211,11 +211,11 @@ class _DetailScreenState extends State<DetailScreen> {
                   children: [
                     const Text(
                       '작가',
-                      style: const TextStyle(fontSize: 15),
+                      style: TextStyle(fontSize: 15),
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      snapshot.data!.author,
+                      snapshot.data!.authors.join(', '),
                       style: const TextStyle(fontSize: 15),
                     ),
                     const Expanded(child: SizedBox(height: 10)),

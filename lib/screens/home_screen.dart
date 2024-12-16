@@ -6,12 +6,14 @@ import 'package:toonflix/screens/list_screen.dart';
 import 'package:toonflix/widgets/webtoon_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+// ignore: must_be_immutable
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
   final List<String> servicesNameKr = ['네이버 웹툰', '카카오페이지 웹툰', '카카오 웹툰'];
-  final List<String> servicesNameEng = ['naver', 'kakaoPage', 'kakao'];
+  final List<String> servicesNameEng = ['naver', 'kakao_Page', 'kakao'];
 
   final Future<List<WebtoonModel>> webtoonsNaver = ApiService.getTodaysToons();
   late Future<List<WebtoonModelKakao>> webtoonsKakaoPage;
@@ -30,7 +32,7 @@ class HomeScreen extends StatelessWidget {
     initializeDateFormatting('ko_KR', null);
 
     DateTime now = DateTime.now();
-    String dayOfWeek = DateFormat('EEEE', 'ko_KR').format(now);
+    DateFormat('EEEE', 'ko_KR').format(now);
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -135,7 +137,7 @@ class HomeScreen extends StatelessWidget {
             title: webtoon.title,
             thumb: webtoon.thumb,
             id: webtoon.id,
-            service: servicesNameEng[0],
+            provider: servicesNameEng[0],
           );
         },
         separatorBuilder: (context, index) => const SizedBox(width: 5),
@@ -152,15 +154,34 @@ class HomeScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           var webtoon = snapshot.data![index];
 
-          return MainThumbWidget(
-            title: webtoon.title,
-            thumb: webtoon.img,
-            id: webtoon.id,
-            service: webtoon.service,
+          return GestureDetector(
+            onTap: () {
+              // 카카오 웹툰은 URL로 바로 이동
+              if (webtoon.provider == "KAKAO" ||
+                  webtoon.provider == "KAKAO_PAGE") {
+                _launchURL(webtoon.url); // 웹사이트로 이동
+              }
+            },
+            child: MainThumbWidget(
+              title: webtoon.title,
+              thumb: webtoon.thumbnail.isNotEmpty ? webtoon.thumbnail[0] : '',
+              id: webtoon.id,
+              provider: webtoon.provider,
+            ),
           );
         },
         separatorBuilder: (context, index) => const SizedBox(width: 5),
       ),
     );
+  }
+
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
